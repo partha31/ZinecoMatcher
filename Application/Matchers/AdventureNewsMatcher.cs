@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Options;
 using ZinecoMatcher.Application.Services;
+using ZinecoMatcher.Contracts.Constants;
 using ZinecoMatcher.Contracts.Interfaces;
 using ZinecoMatcher.Contracts.Models;
 using ZinecoMatcher.Contracts.Results;
@@ -30,11 +31,11 @@ namespace ZinecoMatcher.Application.Matchers
                     if (Utils.NormalizeString(aDVAgent.Name) == agent.Name.ToLowerInvariant()
                         && distance <= 100)
                     {
-                        return new ValidationResult(true, "Match Found");
+                        return new ValidationResult(true, $"{ValidationMessages.ValidNewsAgentMessage} Adventure News");
                     }
                 }
             }
-            return new ValidationResult(false, "No Match found for given agent");
+            return new ValidationResult(false, $"{ValidationMessages.InvalidNewsAgentMessage} Adventure News");
         }
     }
 }

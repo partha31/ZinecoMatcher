@@ -3,7 +3,7 @@ using ZinecoMatcher.Contracts.Interfaces;
 
 namespace ZinecoMatcher.Application
 {
-    public class MatcherFactory
+    public class MatcherFactory: IMatcherFactory
     {
         private readonly IServiceProvider _serviceProvider;
         public MatcherFactory(IServiceProvider serviceProvider)
@@ -19,7 +19,7 @@ namespace ZinecoMatcher.Application
                 case "SUP": return scope.ServiceProvider.GetRequiredService<SuperNewsMatcher>();
                 case "ADV": return scope.ServiceProvider.GetRequiredService<AdventureNewsMatcher>();
                 case "NIW": return scope.ServiceProvider.GetRequiredService<NewsInWordsMatcher>();
-                default: throw new Exception($"Chain for {chainId} is not valid");
+                default: throw new NotSupportedException($"Chain for {chainId} is not valid");
             }
         }
     }

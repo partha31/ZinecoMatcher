@@ -2,8 +2,10 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Http.Resilience;
 using Polly;
+using ZinecoMatcher.API;
 using ZinecoMatcher.Application;
 using ZinecoMatcher.Application.Matchers;
+using ZinecoMatcher.Application.Services;
 using ZinecoMatcher.Contracts.Interfaces;
 using ZinecoMatcher.Contracts.Models;
 using ZinecoMatcher.Infrastructure.ApiClient;
@@ -11,10 +13,12 @@ using ZinecoMatcher.Infrastructure.ApiClient;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddSingleton<MatcherFactory>();
+builder.Services.AddSingleton<IMatcherFactory, MatcherFactory>();
 builder.Services.AddScoped<SuperNewsMatcher>();
 builder.Services.AddScoped<NewsInWordsMatcher>();
 builder.Services.AddScoped<AdventureNewsMatcher>();
+
+builder.Services.AddScoped<INewsAgentService, NewsAgentService>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -52,13 +56,6 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-app.MapPost("/getAgentValidation", ([FromBody] ZinecoNewsAgent agent, MatcherFactory factory) => {
-    app.Logger.LogInformation($"getAgentValidation API called with agent name -> " +
-        $"{agent.Name}");
-    INewsagentMatcher matcher = factory.GetAgentMatcher(agent.ChainId);
-    var result = matcher.ValidateNewsagentAsync(agent);
-    return result;
-}).WithTags("getAgentValidation")
-;
+app.MapNewsAgentValidationEndpoints();
 
 app.Run();

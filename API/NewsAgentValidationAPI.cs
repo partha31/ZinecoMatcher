@@ -12,24 +12,20 @@ namespace ZinecoMatcher.API
     {
         public static IEndpointRouteBuilder MapNewsAgentValidationEndpoints(this IEndpointRouteBuilder app)
         {
-            List<ValidationResult> results = new List<ValidationResult>();
-            app.MapPost("/getAgentValidation", async ( MatcherFactory factory,
-                ILogger logger, ApiClient client, IOptionsSnapshot<ChainApiConfiguration> configuration) => {
-                    
-                    var zineCoAgents = await client.GetAsync<ZinecoNewsAgent>(new Uri(configuration.Value.ZineCoNews.Url));
-                    foreach (var zineCoAgent in zineCoAgents)
-                    {
-                        if (zineCoAgent != null && zineCoAgent.ChainId != null)
-                        {
-                            INewsagentMatcher matcher = factory.GetAgentMatcher(zineCoAgent.ChainId);
-                            var result = await matcher.ValidateNewsagentAsync(zineCoAgent);
-                            results.Add(result);
-                        }
-                    }
+            app.MapGet("/getAllChainAgentValidation", async (INewsAgentService newsAgentservice) => {
 
-                    return results;
+                var result = await newsAgentservice.GetAllChainAgentValidation();
+                return result;
 
-                }).WithTags("getAgentValidation");
+                });
+
+            app.MapPost("/getChainAgentValidation", ([FromBody] ZinecoNewsAgent agent, INewsAgentService newsAgentservice) =>
+            {
+
+                var result = newsAgentservice.GetChainAgentValidation(agent);
+                return result;
+
+            });
 
             return app;
         }

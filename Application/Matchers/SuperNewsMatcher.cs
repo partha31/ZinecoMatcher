@@ -1,6 +1,6 @@
-﻿using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Options;
+﻿using Microsoft.Extensions.Options;
 using ZinecoMatcher.Application.Services;
+using ZinecoMatcher.Contracts.Constants;
 using ZinecoMatcher.Contracts.Interfaces;
 using ZinecoMatcher.Contracts.Models;
 using ZinecoMatcher.Contracts.Results;
@@ -28,12 +28,12 @@ namespace ZinecoMatcher.Application.Matchers
                     if (Utils.NormalizeString(superNewsAgent.Name) == agent.Name.ToLowerInvariant()
                         && Utils.NormalizeString(Utils.GetFullAddress(superNewsAgent)) == Utils.GetFullAddress(agent).ToLowerInvariant())
                     {
-                        return new ValidationResult(true, "Match Found");
+                        return new ValidationResult(true, $"{ValidationMessages.ValidNewsAgentMessage} SuperNews");
                     }
                 }
             }
 
-            return new ValidationResult(false, "No Match found for given agent");
+            return new ValidationResult(false, $"{ValidationMessages.InvalidNewsAgentMessage} SuperNews");
         }
     }
 }

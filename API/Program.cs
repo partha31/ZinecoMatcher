@@ -23,6 +23,8 @@ builder.Services.AddScoped<INewsAgentService, NewsAgentService>();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+// configure api client with resilience handlers for API clients
 builder.Services.AddHttpClient<IApiClient, ApiClient>()
     .AddResilienceHandler("ChainApiOption", builder =>
     {
@@ -42,7 +44,7 @@ builder.Services.AddHttpClient<IApiClient, ApiClient>()
         });
      });
 
-// configure chain api configurations
+// configure chain api configurations with defined models
 
 builder.Services.Configure<ChainApiConfiguration>(
     builder.Configuration.GetSection("AgentChainApis")
@@ -56,6 +58,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+//Added minimal API for both get all and single validation result.
 app.MapNewsAgentValidationEndpoints();
 
 app.Run();

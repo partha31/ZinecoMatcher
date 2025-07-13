@@ -17,7 +17,8 @@ namespace ZinecoMatcher.API
                 var result = await newsAgentservice.GetAllChainAgentValidation();
                 return result;
 
-                });
+                }).WithDescription("This API retreive news Agent list for ZineCo from API and return the " +
+                "matching validation result for all the agent.");
 
             app.MapPost("/getChainAgentValidation", ([FromBody] ZinecoNewsAgent agent, INewsAgentService newsAgentservice) =>
             {

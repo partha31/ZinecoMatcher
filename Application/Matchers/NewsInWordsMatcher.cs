@@ -19,13 +19,13 @@ namespace ZinecoMatcher.Application.Matchers
         }
         public async Task<ValidationResult> ValidateNewsagentAsync(ZinecoNewsAgent agent)
         {
-            var nIWAgents = await _client.GetAsync<NewsAgent>(new Uri(_configuration.Value.NewsInWord.Url));
+            var newsInWordsAgents = await _client.GetAsync<NewsAgent>(new Uri(_configuration.Value.NewsInWord.Url));
 
-            foreach (var nIWAgent in nIWAgents)
+            foreach (var newsInWordAgent in newsInWordsAgents)
             {
-                if (nIWAgent != null)
+                if (newsInWordAgent != null)
                 {
-                    if (Utils.GetReversedName(nIWAgent.Name) == agent.Name)
+                    if (Utils.GetReversedName(newsInWordAgent.Name) == agent.Name)
                     {
                         return new ValidationResult(true, $"{ValidationMessages.ValidNewsAgentMessage} News In Words");
                     }

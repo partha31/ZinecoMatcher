@@ -19,16 +19,16 @@ namespace ZinecoMatcher.Application.Matchers
         }
         public async Task<ValidationResult> ValidateNewsagentAsync(ZinecoNewsAgent agent)
         {
-            var aDVAgents = await _client.GetAsync<NewsAgent>(new Uri(_configuration.Value.AdventureNews.Url));
-            foreach (var aDVAgent in aDVAgents)
+            var adventureNewsAgents = await _client.GetAsync<NewsAgent>(new Uri(_configuration.Value.AdventureNews.Url));
+            foreach (var adventureNewsAgent in adventureNewsAgents)
             {
 
-               if (aDVAgent != null)
+               if (adventureNewsAgent != null)
                 {
                     var distance = GeoDistanceCalculator.CalculateDistanceInMeters(
-                        aDVAgent.Latitude, aDVAgent.Longitude,
+                        adventureNewsAgent.Latitude, adventureNewsAgent.Longitude,
                         agent.Latitude, agent.Longitude);
-                    if (Utils.NormalizeString(aDVAgent.Name) == agent.Name.ToLowerInvariant()
+                    if (Utils.NormalizeString(adventureNewsAgent.Name) == agent.Name.ToLowerInvariant()
                         && distance <= 100)
                     {
                         return new ValidationResult(true, $"{ValidationMessages.ValidNewsAgentMessage} Adventure News");

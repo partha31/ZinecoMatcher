@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
+using ZinecoMatcher.Contracts.Constants;
 using ZinecoMatcher.Contracts.Interfaces;
 using ZinecoMatcher.Contracts.Models;
 using ZinecoMatcher.Contracts.Results;
@@ -24,6 +25,7 @@ namespace ZinecoMatcher.Application.Services
 
         public async Task<List<ValidationResult>> GetAllChainAgentValidation()
         {
+            _logger.LogInformation("Starting validation of all chain agents from Zineco News API.");
             List<ValidationResult> results = new List<ValidationResult>();
             var zineCoAgents = await _client.GetAsync<ZinecoNewsAgent>(new Uri(_configuration.Value.ZineCoNews.Url));
             foreach (var zineCoAgent in zineCoAgents)
@@ -37,7 +39,8 @@ namespace ZinecoMatcher.Application.Services
                     }
                     catch (Exception ex) 
                     {
-                        results.Add(new ValidationResult( false, ex.Message));
+                        _logger.LogError(ex, "Error validating agent {AgentName} with ChainId {ChainId}", zineCoAgent.Name, zineCoAgent.ChainId);
+                        results.Add(new ValidationResult( false, $"{ValidationMessages.InvalidNewsAgentMessage} {zineCoAgent.ChainId}"));
                     }
                 }
             }
@@ -46,6 +49,7 @@ namespace ZinecoMatcher.Application.Services
 
         public async Task<ValidationResult> GetChainAgentValidation(ZinecoNewsAgent agent)
         {
+            _logger.LogInformation("Validating started for agent {AgentName} with ChainId {ChainId}", agent.Name, agent.ChainId);
             try
             {
                 INewsagentMatcher matcher = _factory.GetAgentMatcher(agent.ChainId);
@@ -53,7 +57,8 @@ namespace ZinecoMatcher.Application.Services
                 return result;
             } catch(Exception ex)
             {
-                return new ValidationResult(false, ex.Message);
+                _logger.LogError(ex, "Error validating agent {AgentName} with ChainId {ChainId}", agent.Name, agent.ChainId);
+                return new ValidationResult(false, $"{ValidationMessages.InvalidNewsAgentMessage} {agent.ChainId}");
             }
         }
     }

@@ -12,7 +12,7 @@ namespace ZinecoMatcher.Infrastructure.ApiClient
             _logger = logger;
         }
 
-        public async Task<List<T>> GetAsync<T>(string path)
+        public async Task<List<T>> GetAsync<T>(Uri path)
         {
             try
             {

@@ -13,11 +13,12 @@ namespace ZinecoMatcher.Application
 
         public INewsagentMatcher GetAgentMatcher(string chainId)
         {
-            switch(chainId)
+            var scope = _serviceProvider.CreateScope();
+            switch (chainId)
             {
-                case "SUP": return _serviceProvider.GetRequiredService<SuperNewsMatcher>();
-                case "ADV": return _serviceProvider.GetRequiredService<AdventureNewsMatcher>();
-                case "NIW": return _serviceProvider.GetRequiredService<NewsInWordsMatcher>();
+                case "SUP": return scope.ServiceProvider.GetRequiredService<SuperNewsMatcher>();
+                case "ADV": return scope.ServiceProvider.GetRequiredService<AdventureNewsMatcher>();
+                case "NIW": return scope.ServiceProvider.GetRequiredService<NewsInWordsMatcher>();
                 default: throw new Exception($"Chain for {chainId} is not valid");
             }
         }

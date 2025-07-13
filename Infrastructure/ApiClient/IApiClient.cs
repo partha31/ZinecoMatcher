@@ -2,6 +2,6 @@
 {
     public interface IApiClient
     {
-        Task<List<T>> GetAsync<T>(string path);
+        Task<List<T>> GetAsync<T>(Uri path);
     }
 }

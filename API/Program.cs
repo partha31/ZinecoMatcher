@@ -1,4 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Http.Resilience;
+using Polly;
 using ZinecoMatcher.Application;
 using ZinecoMatcher.Application.Matchers;
 using ZinecoMatcher.Contracts.Interfaces;
@@ -9,14 +12,37 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddSingleton<MatcherFactory>();
-//builder.Services.AddScoped<SuperNewsMatcher>();
-//builder.Services.AddScoped<NewsInWordsMatcher>();
-//builder.Services.AddScoped<AdventureNewsMatcher>();
+builder.Services.AddScoped<SuperNewsMatcher>();
+builder.Services.AddScoped<NewsInWordsMatcher>();
+builder.Services.AddScoped<AdventureNewsMatcher>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddHttpClient<IApiClient, ApiClient>();
+builder.Services.AddHttpClient<IApiClient, ApiClient>()
+    .AddResilienceHandler("ChainApiOption", builder =>
+    {
+        builder.AddRetry(new HttpRetryStrategyOptions
+        {
+            BackoffType = DelayBackoffType.Exponential,
+            MaxRetryAttempts = 3,
+            Delay = TimeSpan.FromSeconds(3),
+        });
+        builder.AddTimeout(TimeSpan.FromSeconds(10));
+        builder.AddCircuitBreaker(new HttpCircuitBreakerStrategyOptions
+        {
+            FailureRatio = 0.5,
+            SamplingDuration = TimeSpan.FromSeconds(30),
+            MinimumThroughput = 10,
+            BreakDuration = TimeSpan.FromSeconds(15)
+        });
+     });
+
+// configure chain api configurations
+
+builder.Services.Configure<ChainApiConfiguration>(
+    builder.Configuration.GetSection("AgentChainApis")
+    );
 
 var app = builder.Build();
 
@@ -27,7 +53,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 app.MapPost("/getAgentValidation", ([FromBody] ZinecoNewsAgent agent, MatcherFactory factory) => {
-    app.Logger.LogInformation($"getAgentValidation API called with context -> " +
+    app.Logger.LogInformation($"getAgentValidation API called with agent name -> " +
         $"{agent.Name}");
     INewsagentMatcher matcher = factory.GetAgentMatcher(agent.ChainId);
     var result = matcher.ValidateNewsagentAsync(agent);

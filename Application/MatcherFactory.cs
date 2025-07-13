@@ -1,4 +1,5 @@
 ﻿using ZinecoMatcher.Application.Matchers;
+using ZinecoMatcher.Contracts.Constants;
 using ZinecoMatcher.Contracts.Interfaces;
 
 namespace ZinecoMatcher.Application
@@ -19,7 +20,7 @@ namespace ZinecoMatcher.Application
                 case "SUP": return scope.ServiceProvider.GetRequiredService<SuperNewsMatcher>();
                 case "ADV": return scope.ServiceProvider.GetRequiredService<AdventureNewsMatcher>();
                 case "NIW": return scope.ServiceProvider.GetRequiredService<NewsInWordsMatcher>();
-                default: throw new NotSupportedException($"Chain for {chainId} is not valid");
+                default: throw new NotSupportedException($"{ValidationMessages.InvalidChain} {chainId}");
             }
         }
     }

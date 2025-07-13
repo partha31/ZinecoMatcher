@@ -4,5 +4,6 @@
     {
         public const string ValidNewsAgentMessage = "News Agent is valid for chain: ";
         public const string InvalidNewsAgentMessage = "News Agent is Invalid for chain: ";
+        public const string InvalidChain = "Chain is invalid or not supported: ";
     }
 }

@@ -1,5 +1,3 @@
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Http.Resilience;
 using Polly;
 using ZinecoMatcher.API;
@@ -25,6 +23,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 // configure api client with resilience handlers for API clients
+// Took some idea from ChatGPT related to the option following best practices
 builder.Services.AddHttpClient<IApiClient, ApiClient>()
     .AddResilienceHandler("ChainApiOption", builder =>
     {

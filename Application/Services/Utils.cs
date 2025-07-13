@@ -6,7 +6,7 @@ namespace ZinecoMatcher.Application.Services
     public static class Utils
     {
 
-        // Remove punctuation from the string. Got this regex expression from ChatGPT.
+        // Remove punctuation from the string. Got this regex expression from Github Copilot.
         public static string NormalizeString(string input) =>
             Regex.Replace(input.ToLowerInvariant(), @"[^\w\s]", " ").Replace("  ", " ").Trim();
 

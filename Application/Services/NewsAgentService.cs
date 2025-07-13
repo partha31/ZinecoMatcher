@@ -34,6 +34,7 @@ namespace ZinecoMatcher.Application.Services
                 {
                     try
                     {
+                        // Get the appropriate strategy based on ChainId
                         INewsagentMatcher matcher = _factory.GetAgentMatcher(zineCoAgent.ChainId);
                         results.Add(await matcher.ValidateNewsagentAsync(zineCoAgent));
                     }
@@ -52,6 +53,7 @@ namespace ZinecoMatcher.Application.Services
             _logger.LogInformation("Validating started for agent {AgentName} with ChainId {ChainId}", agent.Name, agent.ChainId);
             try
             {
+                // Get the appropriate strategy based on ChainId
                 INewsagentMatcher matcher = _factory.GetAgentMatcher(agent.ChainId);
                 var result = await matcher.ValidateNewsagentAsync(agent);
                 return result;
